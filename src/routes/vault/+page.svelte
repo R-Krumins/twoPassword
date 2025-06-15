@@ -8,6 +8,11 @@
   import { getVault } from "$lib/vault.js";
   import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 
+  const vaultItems = getVault();
+  const passwordVisible: boolean[] = $state(
+    Array(vaultItems.length).fill(false)
+  );
+
   async function copyToClipboard(text: string) {
     try {
       await writeText(text);
@@ -16,11 +21,14 @@
       console.error("Failed to copy text:", error);
     }
   }
-  const vaultItems = getVault();
+
+  function togglePasswordVisibility(index: number) {
+    passwordVisible[index] = !passwordVisible[index];
+  }
 </script>
 
 <div class="max-w-4xl mx-auto p-6 space-y-4">
-  {#each vaultItems as item (item.name)}
+  {#each vaultItems as item, index}
     <Collapsible.Root>
       <Card.Root
         class="shadow-sm hover:shadow-md transition-shadow duration-200"
@@ -87,7 +95,7 @@
                 </Button>
                 <Input
                   id="pswd-{item.name}"
-                  type="password"
+                  type={passwordVisible[index] ? "text" : "password"}
                   value={item.pswd}
                   readonly
                   class="flex-1 bg-white border-gray-200"
@@ -97,6 +105,7 @@
                   size="sm"
                   class="px-3 py-2 hover:bg-gray-100 transition-colors"
                   aria-label="Toggle password visibility"
+                  onclick={() => togglePasswordVisibility(index)}
                 >
                   <Eye class="w-4 h-4" />
                 </Button>
