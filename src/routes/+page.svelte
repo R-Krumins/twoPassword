@@ -13,8 +13,8 @@
 
   function handleUnlockVault() {
     invoke("open_vault", {
-      path: "/tmp/vault/vault",
-      key: "superdupersecret123",
+      path,
+      key,
     })
       .then((res) => {
         console.log("Vault unlocked successfully");
