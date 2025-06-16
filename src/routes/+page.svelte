@@ -25,6 +25,20 @@
         console.error("Failed to unlock vault:", error);
       });
   }
+
+  function handleNewVault() {
+    invoke("create_new_vault", {
+      path,
+      key,
+    })
+      .then(() => {
+        console.log("New vault created successfully");
+        goto("/vault");
+      })
+      .catch((error) => {
+        console.error("Failed to create new vault:", error);
+      });
+  }
 </script>
 
 <div class="flex items-center justify-center min-h-screen">
@@ -59,7 +73,9 @@
       <Button type="submit" class="w-full" onclick={handleUnlockVault}
         >Unlock</Button
       >
-      <Button variant="outline" class="w-full">New Vault</Button>
+      <Button variant="outline" class="w-full" onclick={handleNewVault}
+        >New Vault</Button
+      >
     </Card.Footer>
   </Card.Root>
 </div>

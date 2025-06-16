@@ -20,6 +20,23 @@ fn open_vault(path: String, key: String, state: State<'_, VaultState>) -> Result
 }
 
 #[tauri::command]
+fn create_new_vault(
+    path: String,
+    key: String,
+    state: State<'_, VaultState>,
+) -> Result<String, String> {
+    let vault = Vault::new(path, key);
+
+    vault.write("[]".to_string())?; // Initialize with an empty JSON array
+
+    // Store the vault as the active vault
+    let mut vault_state = state.lock().unwrap();
+    *vault_state = Some(vault);
+
+    Ok("[]".to_string())
+}
+
+#[tauri::command]
 fn save_vault(data: String, state: State<'_, VaultState>) -> Result<(), String> {
     let mut vault_state = state.lock().unwrap();
     if let Some(vault) = vault_state.as_mut() {
@@ -35,7 +52,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![open_vault, save_vault])
+        .invoke_handler(tauri::generate_handler![
+            open_vault,
+            save_vault,
+            create_new_vault,
+        ])
         .manage(Mutex::new(Option::<Vault>::None))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
