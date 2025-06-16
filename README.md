@@ -25,7 +25,10 @@ Tauri was selected primarily for its focus on security, small binary size, and s
 
 # 🛠 How to build?
 
+Requires: `rust` and `npm` to be installed.
+
 ```bash
+cd twoPassword
 npm i
 npm run tauri dev
 ```
