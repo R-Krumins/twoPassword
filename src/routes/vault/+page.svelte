@@ -10,11 +10,13 @@
     ChevronDown,
     Eye,
     Trash2,
+    LogOut,
   } from "@lucide/svelte";
   import { getVault } from "$lib/vault.js";
   import { writeText } from "@tauri-apps/plugin-clipboard-manager";
   import AddVaultItem from "./AddVaultItem.svelte";
   import { invoke } from "@tauri-apps/api/core";
+  import { goto } from "$app/navigation";
 
   const vaultItems = $state(getVault());
   const passwordVisible: boolean[] = $state(
@@ -58,11 +60,25 @@
         console.error("Failed to delete item from vault:", error);
       });
   }
+
+  function logout() {
+    vaultItems.splice(0, vaultItems.length);
+    goto("/");
+  }
 </script>
 
 <div>
-  <div class="flex justify-end items-center max-w-4xl mx-auto p-6">
+  <div class="flex justify-end items-center max-w-4xl mx-auto p-6 gap-2">
     <AddVaultItem onAddItem={addItem} />
+    <Button
+      variant="ghost"
+      size="icon"
+      class="ml-2"
+      aria-label="Logout"
+      onclick={logout}
+    >
+      <LogOut class="w-5 h-5" />
+    </Button>
   </div>
   <div class="max-w-4xl mx-auto p-6 space-y-4">
     {#if vaultItems.length === 0}
