@@ -10,33 +10,21 @@
 
   let path: string = "";
   let key: string = "";
+  let errorMsg: string | null = null;
 
-  function handleUnlockVault() {
-    invoke("open_vault", {
+  function handleUnlockVault(command: string) {
+    invoke(command, {
       path,
       key,
     })
       .then((res) => {
-        console.log("Vault unlocked successfully");
+        console.log(command, "Successs!");
         setVault(res as string);
         goto("/vault");
       })
       .catch((error) => {
-        console.error("Failed to unlock vault:", error);
-      });
-  }
-
-  function handleNewVault() {
-    invoke("create_new_vault", {
-      path,
-      key,
-    })
-      .then(() => {
-        console.log("New vault created successfully");
-        goto("/vault");
-      })
-      .catch((error) => {
-        console.error("Failed to create new vault:", error);
+        console.log(command, "Fail!");
+        errorMsg = error;
       });
   }
 </script>
@@ -67,14 +55,24 @@
           </div>
         </div>
       </form>
+
+      {#if errorMsg}
+        <div class="text-red-500 mt-2">
+          <p>{errorMsg}</p>
+        </div>
+      {/if}
     </Card.Content>
 
     <Card.Footer class="flex-col gap-2">
-      <Button type="submit" class="w-full" onclick={handleUnlockVault}
-        >Unlock</Button
+      <Button
+        type="submit"
+        class="w-full"
+        onclick={() => handleUnlockVault("open_vault")}>Unlock</Button
       >
-      <Button variant="outline" class="w-full" onclick={handleNewVault}
-        >New Vault</Button
+      <Button
+        variant="outline"
+        class="w-full"
+        onclick={() => handleUnlockVault("create_new_vault")}>New Vault</Button
       >
     </Card.Footer>
   </Card.Root>

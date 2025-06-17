@@ -33,13 +33,13 @@ impl Vault {
         let mut file_data = nonce.to_vec();
         file_data.extend_from_slice(&ciphertext);
 
-        fs::write(&self.path, file_data).map_err(|_| "Failed to write to file".to_string())?;
+        fs::write(&self.path, file_data).map_err(|e| e.to_string())?;
 
         Ok(())
     }
 
     pub fn read(&self) -> Result<String, String> {
-        let file_data = fs::read(&self.path).map_err(|_| "Failed to read file".to_string())?;
+        let file_data = fs::read(&self.path).map_err(|e| e.to_string())?;
 
         // nonce is 12 bytes
         if file_data.len() < 12 {
